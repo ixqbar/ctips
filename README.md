@@ -30,7 +30,7 @@ $redis_handle->set("*", '{"noticeData":{"message":"nice"}}');
 ```
 * https://github.com/jonnywang/fcgiProxy
 
-![](screenshot/1524046586901.png)
+![](screenshot/1524046586901.png)
 ![](screenshot/1524046912758.png)
 ![](screenshot/1524046959081.png)
 

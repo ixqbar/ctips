@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Resources/blue-icon.icns</file>
+        <file>Resources/message.wav</file>
+        <file>Resources/red-icon.icns</file>
+        <file>Resources/light_off_16.png</file>
+        <file>Resources/light_on_16.png</file>
+        <file>Resources/splash.png</file>
+    </qresource>
+</RCC>

@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->listWidget->setAcceptDrops(false);
 
     connect(ui->quitBtn, &QPushButton::clicked, [&]() {
         quitClear();
@@ -151,6 +152,10 @@ void MainWindow::updateMessage(QString message)
     ui->listWidget->setCurrentRow(0);
     ui->infoLabel->setText(QDateTime::currentDateTime().toString("截止:yyyy-MM-dd hh:mm:ss"));
 
+    if (ui->listWidget->count() > 1) {
+        ui->listWidget->setAcceptDrops(true);
+    }
+
     trayIcon->showMessage(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"),
                           message,
                           appBlueIcon,
@@ -199,8 +204,14 @@ void MainWindow::deleteMenuSelected()
     ui->listWidget->removeItemWidget(item);
     delete item;
 
-    if (ui->listWidget->count() == 0) {
+    int num = ui->listWidget->count();
+    if (num == 0) {
         ui->infoLabel->setText("");
+        ui->listWidget->setAcceptDrops(false);
+    } else if (num > 1) {
+        ui->listWidget->setAcceptDrops(true);
+    } else {
+        ui->listWidget->setAcceptDrops(false);
     }
 }
 
@@ -221,6 +232,7 @@ void MainWindow::clearMenuSelected()
         return;
     }
 
+    ui->listWidget->setAcceptDrops(false);
     ui->listWidget->clear();
     ui->infoLabel->setText("");
 }

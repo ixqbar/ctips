@@ -237,7 +237,7 @@ void MainWindow::connectServer()
     QString origin;
     origin.append("rumbladeApp:").append(macAddress);
 
-    webUrl = QUrl(settings->value("url").toString().append("&uuid=").append(macAddress));
+    webUrl = QUrl(settings->value("url").toString().append("&uuid=ctips:").append(macAddress));
 
     qDebug() << "start connect websocket " << webUrl.toString();
 

@@ -149,7 +149,7 @@ void MainWindow::updateMessage(QString message)
     item->setFont(QFont("Monaco", 14));
 
     ui->listWidget->insertItem(0, item);
-    ui->listWidget->setCurrentRow(0);
+    ui->listWidget->clearSelection();
     ui->infoLabel->setText(QDateTime::currentDateTime().toString("截止:yyyy-MM-dd hh:mm:ss"));
 
     if (ui->listWidget->count() > 1) {
@@ -162,7 +162,9 @@ void MainWindow::updateMessage(QString message)
                           300000);
     trayIcon->setToolTip(message);
 
-    messageTipTimer.start();
+    if (messageTipTimer.isActive() == false) {
+        messageTipTimer.start();
+    }
 }
 
 bool MainWindow::event(QEvent *event)
@@ -178,13 +180,18 @@ bool MainWindow::event(QEvent *event)
 
 void MainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
 {
-    QListWidgetItem* curItem = ui->listWidget->itemAt(pos);
-    if (curItem == NULL)  {
+    Q_UNUSED(pos);
+
+    if (ui->listWidget->count() == 0) {
         return;
     }
 
     QAction *deleteMenu = new QAction(tr("delete"), this);
     QAction *clearMenu = new QAction(tr("clear"), this);
+
+    if (ui->listWidget->selectedItems().count() == 0) {
+        deleteMenu->setEnabled(false);
+    }
 
     QMenu* popMenu = new QMenu(this);
     popMenu->addAction(deleteMenu);
@@ -196,13 +203,16 @@ void MainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
 
 void MainWindow::deleteMenuSelected()
 {
-    QListWidgetItem *item = ui->listWidget->currentItem();
-    if (item == NULL) {
+    QList<QListWidgetItem*> itemList = ui->listWidget->selectedItems();
+    if (itemList.count() == 0) {
         return;
     }
 
-    ui->listWidget->removeItemWidget(item);
-    delete item;
+    QListWidgetItem *item;
+    foreach (item, itemList) {
+        ui->listWidget->removeItemWidget(item);
+        delete item;
+    }
 
     int num = ui->listWidget->count();
     if (num == 0) {
@@ -235,6 +245,8 @@ void MainWindow::clearMenuSelected()
     ui->listWidget->setAcceptDrops(false);
     ui->listWidget->clear();
     ui->infoLabel->setText("");
+
+    resetTrayIcon();
 }
 
 void MainWindow::connectServer()

@@ -47,6 +47,12 @@
     <property name="alternatingRowColors">
      <bool>true</bool>
     </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::MultiSelection</enum>
+    </property>
+    <property name="selectionRectVisible">
+     <bool>false</bool>
+    </property>
    </widget>
    <widget class="QPushButton" name="minBtn">
     <property name="geometry">

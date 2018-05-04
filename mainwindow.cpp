@@ -237,11 +237,6 @@ void MainWindow::clearMenuSelected()
         return;
     }
 
-    QListWidgetItem *item = ui->listWidget->currentItem();
-    if (item == NULL) {
-        return;
-    }
-
     ui->listWidget->setAcceptDrops(false);
     ui->listWidget->clear();
     ui->infoLabel->setText("");

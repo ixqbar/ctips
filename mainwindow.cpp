@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listWidget->setAcceptDrops(false);
 
     connect(ui->quitBtn, &QPushButton::clicked, [&]() {
-        quitClear();
         qApp->quit();
     });
 
@@ -46,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connectedService = false;
     trayIconSwitched = false;
 
+    trayIcon = new QSystemTrayIcon(this);
     settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());
 }
 
@@ -77,8 +77,6 @@ void MainWindow::quitClear()
 
 void MainWindow::start()
 {
-    trayIcon = new QSystemTrayIcon(this);
-
     connect(trayIcon, &QSystemTrayIcon::messageClicked, this, &MainWindow::messageClicked);
     connect(trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::iconActivated);
 
@@ -253,12 +251,11 @@ void MainWindow::connectServer()
         return;
     }
 
+    webUrl = QUrl(settings->value("url").toString().append("&uuid=ctips:").append(macAddress));
+    qDebug() << "start connect websocket " << webUrl.toString();
+
     QString origin;
     origin.append("rumbladeApp:").append(macAddress);
-
-    webUrl = QUrl(settings->value("url").toString().append("&uuid=ctips:").append(macAddress));
-
-    qDebug() << "start connect websocket " << webUrl.toString();
 
     webSocket = new QWebSocket(origin);
     connect(webSocket, &QWebSocket::connected, this, &MainWindow::onWebSocketConnected);

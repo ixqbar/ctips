@@ -48,7 +48,7 @@
      <bool>true</bool>
     </property>
     <property name="selectionMode">
-     <enum>QAbstractItemView::MultiSelection</enum>
+     <enum>QAbstractItemView::ExtendedSelection</enum>
     </property>
     <property name="selectionRectVisible">
      <bool>false</bool>

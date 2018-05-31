@@ -21,32 +21,57 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->listWidget->setAcceptDrops(false);
 
+    setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::FramelessWindowHint);
+
+    gotAppIconPosition = false;
+    connectedService   = false;
+    trayIconSwitched   = false;
+
+    macAddress = GameHelper::getInstance().getMacAddress();
+    qDebug() << "address:" << macAddress;
+
+    bellForMessage = new QSound(":/Resources/message.wav");
+    appRedIcon     = QIcon(":/Resources/red-icon.icns");
+    appBlueIcon    = QIcon(":/Resources/blue-icon.icns");
+    stateOnPixmap  = QPixmap::fromImage(QImage(":/Resources/light_on_16.png"));
+    stateOffPixmap = QPixmap::fromImage(QImage(":/Resources/light_off_16.png"));
+
+    ui->states->setPixmap(stateOffPixmap);
+
+    settings   = new QSettings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());
+    trayIcon   = new QSystemTrayIcon(this);
+
+    optionsWin = NULL;
+
     connect(ui->quitBtn, &QPushButton::clicked, [&]() {
         qApp->quit();
     });
 
     connect(ui->minBtn, &QPushButton::clicked, [&]() {
+        if (this->optionsWin != NULL) {
+            this->optionsWin->hide();
+        }
         this->hide();
     });
 
-    setWindowFlags(Qt::WindowMinimizeButtonHint | Qt::FramelessWindowHint);
+    connect(ui->optBtn, &QPushButton::clicked, [&]() {
+        if (this->optionsWin == NULL) {
+            this->optionsWin = new Options(this);
+        }
 
-    bellForMessage = new QSound(":/Resources/message.wav");
+        if (this->optionsWin->isVisible() && this->optionsWin->isActiveWindow() == false) {
+            this->optionsWin->raise();
+        } else {
+            this->optionsWin->show();
+        }
+    });
 
-    appRedIcon = QIcon(":/Resources/red-icon.icns");
-    appBlueIcon = QIcon(":/Resources/blue-icon.icns");
+    QString webSocketUrlSectionName = "url/";
+    webSocketUrlSectionName.append(settings->value("common/url").toString());
 
-    stateOnPixmap = QPixmap::fromImage(QImage(":/Resources/light_on_16.png"));
-    stateOffPixmap = QPixmap::fromImage(QImage(":/Resources/light_off_16.png"));
+    qDebug() << "default websocket url section name:" << webSocketUrlSectionName;
 
-    ui->states->setPixmap(stateOffPixmap);
-
-    gotAppIconPosition = false;
-    connectedService = false;
-    trayIconSwitched = false;
-
-    trayIcon = new QSystemTrayIcon(this);
-    settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());
+    resetWebSocketUrl(webSocketUrlSectionName);
 }
 
 MainWindow::~MainWindow()
@@ -73,6 +98,13 @@ void MainWindow::quitClear()
     delete bellForMessage;
     delete trayIcon;
     delete settings;
+    delete optionsWin;
+}
+
+void MainWindow::resetWebSocketUrl(QString urlSectionName)
+{
+    webSocketUrl = QUrl(settings->value(urlSectionName).toString().append("&uuid=ctips:").append(macAddress));
+    qDebug() << "reset websocket url" << webSocketUrl.toString();
 }
 
 void MainWindow::start()
@@ -169,7 +201,26 @@ bool MainWindow::event(QEvent *event)
 {
     if (event->type() == MessageEvent::MessageEventType) {
         MessageEvent *msgEvent = static_cast<MessageEvent *>(event);
-        updateMessage(msgEvent->getMessage());
+
+        qDebug() << "receive messageEvent type" << msgEvent->getMessageType() << "messageEvent message" << msgEvent->getMessage();
+
+        switch (msgEvent->getMessageType()) {
+        case 0:
+            updateMessage(msgEvent->getMessage());
+            break;
+        case 1:
+            resetWebSocketUrl(msgEvent->getMessage());
+            webSocket->disconnected();
+            webSocket->open(webSocketUrl);
+            ui->listWidget->setAcceptDrops(false);
+            ui->listWidget->clear();
+            ui->infoLabel->setText("");
+            resetTrayIcon();
+            break;
+        default:
+            break;
+        }
+
         return true;
     }
 
@@ -244,15 +295,9 @@ void MainWindow::clearMenuSelected()
 
 void MainWindow::connectServer()
 {
-    QString macAddress = GameHelper::getInstance().getMacAddress();
-    qDebug() << "address:" << macAddress;
-
     if (macAddress.length() == 0) {
         return;
     }
-
-    webUrl = QUrl(settings->value("url").toString().append("&uuid=ctips:").append(macAddress));
-    qDebug() << "start connect websocket " << webUrl.toString();
 
     QString origin;
     origin.append("rumbladeApp:").append(macAddress);
@@ -265,7 +310,7 @@ void MainWindow::connectServer()
     connect(webSocket, &QWebSocket::stateChanged, this, &MainWindow::onWebSocketStateChanged);
     connect(webSocket, &QWebSocket::pong, this, &MainWindow::onWebSocketPong);
 
-    webSocket->open(webUrl);
+    webSocket->open(webSocketUrl);
 
     webSocketPingTimer.setInterval(15000);
     webSocketPingTimer.start();
@@ -344,7 +389,7 @@ void MainWindow::onWebSocketTimerTimeout()
     } else {
         qDebug() << "websocket reconnect for timeout";
         webSocket->close();
-        webSocket->open(webUrl);
+        webSocket->open(webSocketUrl);
     }
 }
 

@@ -29,17 +29,20 @@ SOURCES += \
         httphandler.cpp \
         messageevent.cpp \
         gamehelper.cpp \
-        gamesplash.cpp
+        gamesplash.cpp \
+        options.cpp
 
 HEADERS += \
         mainwindow.h \
         httphandler.h \
         messageevent.h \
         gamehelper.h \
-        gamesplash.h
+        gamesplash.h \
+        options.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+        options.ui
 
 DISTFILES += \
     Resource/message.wav

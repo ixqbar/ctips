@@ -60,7 +60,7 @@
       <x>370</x>
       <y>450</y>
       <width>66</width>
-      <height>30</height>
+      <height>32</height>
      </rect>
     </property>
     <property name="text">
@@ -72,7 +72,7 @@
      <rect>
       <x>5</x>
       <y>455</y>
-      <width>321</width>
+      <width>271</width>
       <height>20</height>
      </rect>
     </property>
@@ -89,8 +89,8 @@
    <widget class="QLabel" name="states">
     <property name="geometry">
      <rect>
-      <x>350</x>
-      <y>455</y>
+      <x>285</x>
+      <y>457</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -105,14 +105,27 @@
    <widget class="QPushButton" name="quitBtn">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>436</x>
       <y>450</y>
       <width>66</width>
-      <height>30</height>
+      <height>32</height>
      </rect>
     </property>
     <property name="text">
      <string>quit</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="optBtn">
+    <property name="geometry">
+     <rect>
+      <x>304</x>
+      <y>450</y>
+      <width>68</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>options</string>
     </property>
    </widget>
   </widget>

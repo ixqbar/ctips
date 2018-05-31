@@ -16,7 +16,7 @@ void HttpHandler::service(HttpRequest &request, HttpResponse &response)
     }
 
     MessageEvent *msgEvent = new MessageEvent();
-    msgEvent->setMessage(request.getBody());
+    msgEvent->setMessage(0, request.getBody());
     QApplication::postEvent(win, msgEvent);
 
     response.write("ok", true);

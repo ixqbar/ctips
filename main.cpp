@@ -18,11 +18,12 @@ int main(int argc, char *argv[])
     QApplication::setApplicationName("ctips");
 
     QSettings *settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());
-    QVariant urlValue = settings->value("url");
+    QVariant urlValue = settings->value("url/default");
     if (urlValue.isNull()
             || urlValue.toString().length() == 0
             || urlValue.toString().startsWith("ws") == false) {
-        settings->setValue("url", "ws://127.0.0.1:8899/sock?proxy=0");
+        settings->setValue("common/url", "default");
+        settings->setValue("url/default", "ws://127.0.0.1:8899/sock?proxy=0");
         settings->setValue("http/port", 7878);
         settings->setValue("http/minThreads", 1);
     }

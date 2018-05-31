@@ -9,6 +9,8 @@
 #include <QTimer>
 #include <QDateTime>
 
+#include "options.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -25,13 +27,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QUrl webUrl;
+    QUrl webSocketUrl;
     QIcon appRedIcon;
     QIcon appBlueIcon;
     QSound *bellForMessage;
     QSystemTrayIcon *trayIcon;
     QWebSocket *webSocket;
     QSettings *settings;
+    QString macAddress;
 
     QTimer webSocketPingTimer;
     QTimer messageTipTimer;
@@ -44,9 +47,12 @@ private:
     QPixmap stateOnPixmap;
     QPixmap stateOffPixmap;
 
+    Options *optionsWin;
+
     void quitClear();
     void connectServer();
     void resetTrayIcon();
+    void resetWebSocketUrl(QString urlSectionName);
 
 protected:
     bool event(QEvent *event);

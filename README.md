@@ -1,12 +1,15 @@
 ## version
 ```
-v0.0.2
+v0.0.3
 ```
 
 ## config
 ```
-[General]
-url="ws://127.0.0.1:8899/sock?proxy=0"
+[common]
+url=default
+
+[url]
+default="ws://127.0.0.1:8899/sock?proxy=0"
 
 [http]
 minThreads=1
@@ -32,7 +35,8 @@ $redis_handle->set("*", '{"noticeData":{"message":"nice"}}');
 
 ![](screenshot/1524046586901.png)
 ![](screenshot/1524046912758.png)
-![](screenshot/1524046959081.png)
+![](screenshot/1527759894977.png)
+![](screenshot/1527759736632.png)
 
 
 ## thanks

@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QTimer>
 #include <QDateTime>
+#include <QClipboard>
 
 #include "options.h"
 
@@ -48,6 +49,7 @@ private:
     QPixmap stateOffPixmap;
 
     Options *optionsWin;
+    QClipboard *clipboard;
 
     void quitClear();
     void connectServer();
@@ -61,6 +63,7 @@ private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void messageClicked();
     void on_listWidget_customContextMenuRequested(const QPoint &pos);
+    void copyMenuSelected();
     void deleteMenuSelected();
     void clearMenuSelected();
 

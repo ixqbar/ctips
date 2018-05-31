@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     trayIcon   = new QSystemTrayIcon(this);
 
     optionsWin = NULL;
+    clipboard = NULL;
 
     connect(ui->quitBtn, &QPushButton::clicked, [&]() {
         qApp->quit();
@@ -239,19 +240,38 @@ void MainWindow::on_listWidget_customContextMenuRequested(const QPoint &pos)
         return;
     }
 
+    QAction *copyMenu = new QAction(tr("copy"), this);
     QAction *deleteMenu = new QAction(tr("delete"), this);
     QAction *clearMenu = new QAction(tr("clear"), this);
 
     if (ui->listWidget->selectedItems().count() == 0) {
+        copyMenu->setEnabled(false);
         deleteMenu->setEnabled(false);
     }
 
     QMenu* popMenu = new QMenu(this);
+    popMenu->addAction(copyMenu);
     popMenu->addAction(deleteMenu);
     popMenu->addAction(clearMenu);
+    connect(copyMenu, &QAction::triggered, this, &MainWindow::copyMenuSelected);
     connect(deleteMenu, &QAction::triggered, this, &MainWindow::deleteMenuSelected);
     connect(clearMenu, &QAction::triggered, this, &MainWindow::clearMenuSelected);
     popMenu->exec(QCursor::pos());
+}
+
+
+void MainWindow::copyMenuSelected()
+{
+    QList<QListWidgetItem*> itemList = ui->listWidget->selectedItems();
+    if (itemList.count() == 0) {
+        return;
+    }
+
+    if (clipboard == NULL) {
+        clipboard = QApplication::clipboard();
+    }
+
+    clipboard->setText(itemList.first()->text());
 }
 
 void MainWindow::deleteMenuSelected()

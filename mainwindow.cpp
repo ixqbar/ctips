@@ -48,21 +48,21 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     connect(ui->minBtn, &QPushButton::clicked, [&]() {
-        if (this->optionsWin != NULL) {
-            this->optionsWin->hide();
+        if (optionsWin != NULL) {
+            optionsWin->hide();
         }
         this->hide();
     });
 
     connect(ui->optBtn, &QPushButton::clicked, [&]() {
-        if (this->optionsWin == NULL) {
-            this->optionsWin = new Options(this);
+        if (optionsWin == NULL) {
+            optionsWin = new Options(this);
         }
 
-        if (this->optionsWin->isVisible() && this->optionsWin->isActiveWindow() == false) {
-            this->optionsWin->raise();
+        if (optionsWin->isVisible() && optionsWin->isActiveWindow() == false) {
+            optionsWin->raise();
         } else {
-            this->optionsWin->show();
+            optionsWin->show();
         }
     });
 
@@ -92,6 +92,10 @@ void MainWindow::quitClear()
 
     if (messageTipTimer.isActive()) {
         messageTipTimer.stop();
+    }
+
+    if (optionsWin != NULL) {
+        delete optionsWin;
     }
 
     delete ui;

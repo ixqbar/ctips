@@ -61,13 +61,20 @@ void Options::showEvent(QShowEvent *event)
     ui->comboBox->clear();
 
     int i = 0;
+    QString itemValue;
     foreach (QString sectionName, settings->allKeys().filter("url/")) {
         qDebug() << sectionName << "->" << settings->value(sectionName).toString();
+
+        itemValue.clear();
+        itemValue.append("[").append(sectionName.mid(4)).append("]->")
+                .append(settings->value(sectionName).toString());
+
         if (sectionName == webSocketUrlSectionName) {
             webSocketUrlSectionIndex = i;
             ui->info->setText(settings->value(sectionName).toString());
         }
-        ui->comboBox->addItem(settings->value(sectionName).toString(), QVariant(sectionName));
+
+        ui->comboBox->addItem(itemValue, QVariant(sectionName));
         i++;
     }
 
@@ -82,7 +89,8 @@ void Options::currentIndexChanged(int index)
         return;
     }
 
-    ui->info->setText(ui->comboBox->itemText(index));
+    QString sectionName = ui->comboBox->itemData(index).toString();
+    ui->info->setText(settings->value(sectionName).toString());
     webSocketUrlSectionIndex = index;
 
     QString selectWebSocketUrlSectionName = ui->comboBox->itemData(index).toString();

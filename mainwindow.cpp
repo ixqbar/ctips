@@ -197,10 +197,10 @@ void MainWindow::updateMessage(QString message)
     bellForMessage->play();
 
     QListWidgetItem *item = new QListWidgetItem();
-    item->setText(message);
+    item->setText(noticeMessage);
     item->setSizeHint(QSize(470, 25));
-    item->setToolTip(message);
-    item->setFont(QFont("Monaco", 14));
+    item->setToolTip(noticeMessage);
+    item->setFont(QFont("PT mono", 14));
 
     ui->listWidget->insertItem(0, item);
     ui->listWidget->clearSelection();

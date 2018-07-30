@@ -1,6 +1,6 @@
 ## version
 ```
-v0.0.3
+v0.0.4
 ```
 
 ## config
@@ -29,7 +29,7 @@ curl --data "this is a test message" 'http://localhost:7878/'
 
 $redis_handle = new Redis();
 $redis_handle->connect('127.0.0.1', 6899);
-$redis_handle->set("*", '{"noticeData":{"message":"nice"}}');
+$redis_handle->set("*", '{"message":"nice"}');
 ```
 * https://github.com/jonnywang/fcgiProxy
 

@@ -374,9 +374,8 @@ void MainWindow::onWebSocketMessageReceived(const QString &message)
     }
 
     QJsonObject responseObj = responseDoc.object();
-    if (responseObj.contains("noticeData")) {
-        QJsonObject noticeData = responseObj.value("noticeData").toObject();
-        updateMessage(noticeData.value("message").toString());
+    if (responseObj.contains("message")) {
+        updateMessage(responseObj.value("message").toString());
         return;
     }
 }

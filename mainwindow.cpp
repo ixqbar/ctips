@@ -174,7 +174,26 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::updateMessage(QString message)
 {
-    qDebug() << "receive http server message:" << message;
+    qDebug() << "receive notice message:" << message;
+
+    QJsonParseError jsonErr;
+    QJsonDocument responseDoc = QJsonDocument::fromJson(message.toUtf8(), &jsonErr);
+    if (jsonErr.error != QJsonParseError::NoError
+            || responseDoc.isEmpty()
+            || responseDoc.isNull()) {
+        qDebug() << "invalid notice message format:" << message;
+        return;
+    }
+
+    QJsonObject responseObj = responseDoc.object();
+    if (responseObj.contains("message") == false) {
+        qDebug() << "invalid notice message format:" << message;
+        return;
+    }
+
+    QString noticeTitle = responseObj.value("title").toString();
+    QString noticeMessage = responseObj.value("message").toString();
+
     bellForMessage->play();
 
     QListWidgetItem *item = new QListWidgetItem();
@@ -191,10 +210,12 @@ void MainWindow::updateMessage(QString message)
         ui->listWidget->setAcceptDrops(true);
     }
 
-    trayIcon->showMessage(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"),
-                          message,
-                          appBlueIcon,
-                          300000);
+    trayIcon->showMessage(
+        noticeTitle.isEmpty() ? QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") : noticeTitle,
+        noticeMessage,
+        appBlueIcon,
+        300000
+    );
     trayIcon->setToolTip(message);
 
     if (messageTipTimer.isActive() == false) {
@@ -363,21 +384,7 @@ void MainWindow::onWebSocketDisconnected()
 void MainWindow::onWebSocketMessageReceived(const QString &message)
 {
     qDebug() << "webSocket message received:" << message;
-
-    QJsonParseError jsonErr;
-    QJsonDocument responseDoc = QJsonDocument::fromJson(message.toUtf8(), &jsonErr);
-    if (jsonErr.error != QJsonParseError::NoError
-            || responseDoc.isEmpty()
-            || responseDoc.isNull()) {
-        qDebug() << "parse webSocket message failed:" << message;
-        return;
-    }
-
-    QJsonObject responseObj = responseDoc.object();
-    if (responseObj.contains("message")) {
-        updateMessage(responseObj.value("message").toString());
-        return;
-    }
+    updateMessage(message);
 }
 
 void MainWindow::onWebSocketPong(quint64 elapsedTime, const QByteArray &payload)

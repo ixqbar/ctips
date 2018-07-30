@@ -20,7 +20,7 @@ port=7878
 
 ## by local http server
 ```
-curl --data "this is a test message" 'http://localhost:7878/'
+curl --data {"title":"pay","message":"nice"} 'http://localhost:7878/'
 ```
 
 ## by remote websocket server
@@ -29,7 +29,7 @@ curl --data "this is a test message" 'http://localhost:7878/'
 
 $redis_handle = new Redis();
 $redis_handle->connect('127.0.0.1', 6899);
-$redis_handle->set("*", '{"message":"nice"}');
+$redis_handle->rawCommand("npush", "*", '{"title":"pay","message":"nice"}');
 ```
 * https://github.com/jonnywang/fcgiProxy
 

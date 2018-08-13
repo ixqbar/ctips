@@ -15,6 +15,8 @@ void HttpHandler::service(HttpRequest &request, HttpResponse &response)
         return;
     }
 
+    qDebug() << "httpServer received message:" << request.getBody();
+
     MessageEvent *msgEvent = new MessageEvent();
     msgEvent->setMessage(0, request.getBody());
     QApplication::postEvent(win, msgEvent);

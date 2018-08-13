@@ -20,7 +20,7 @@ port=7878
 
 ## by local http server
 ```
-curl --data {"title":"pay","message":"nice"} 'http://localhost:7878/'
+curl -d '{"title":"pay","message":"nice"}' 'http://localhost:7878/'
 ```
 
 ## by remote websocket server

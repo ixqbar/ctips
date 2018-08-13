@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
     // http://doc.qt.io/qt-5/qdatetime.html#toString
     qSetMessagePattern("[%{time yyyy-MM-dd hh:mm:ss.zzz}]%{file}(%{line}): %{message}");
 
-    QApplication::setOrganizationDomain("canxianjie.com");
-    QApplication::setOrganizationName("caoxianjie");
+    QApplication::setOrganizationDomain("ixqbar.com");
+    QApplication::setOrganizationName("ixqbar");
     QApplication::setApplicationName("ctips");
 
     QSettings *settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, QApplication::organizationName(), QApplication::applicationName());

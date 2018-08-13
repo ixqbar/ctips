@@ -15,7 +15,7 @@ default="ws://127.0.0.1:8899/sock?proxy=0&monitor=1"
 minThreads=1
 port=7878
 ```
-* cat ~/.config/caoxianjie/ctips.ini
+* cat ~/.config/ixqbar/ctips.ini
 
 
 ## by local http server

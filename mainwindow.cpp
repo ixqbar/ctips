@@ -44,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
     optionsWin = NULL;
     clipboard = NULL;
 
+    connectedEnabled = settings->value("common/enabled").toBool();
+
     connect(ui->quitBtn, &QPushButton::clicked, [&]() {
         qApp->quit();
     });
@@ -103,7 +105,6 @@ void MainWindow::quitClear()
     delete bellForMessage;
     delete trayIcon;
     delete settings;
-    delete optionsWin;
 }
 
 void MainWindow::resetWebSocketUrl(QString urlSectionName)
@@ -243,6 +244,19 @@ bool MainWindow::event(QEvent *event)
             ui->infoLabel->setText("");
             resetTrayIcon();
             break;
+        case 2:
+            connectedEnabled = msgEvent->getMessage() == QString::number(true);
+            if (connectedEnabled) {
+                webSocket->disconnected();
+                webSocket->open(webSocketUrl);
+                webSocketPingTimer.start();
+                qDebug() << "connect server enabled";
+            } else {
+                webSocket->disconnected();
+                webSocketPingTimer.stop();
+                qDebug() << "connect server disabled";
+            }
+            break;
         default:
             break;
         }
@@ -345,7 +359,7 @@ void MainWindow::connectServer()
     }
 
     QString origin;
-    origin.append("rumbladeApp:").append(macAddress);
+    origin.append("ctipsApp:").append(macAddress);
 
     webSocket = new QWebSocket(origin);
     connect(webSocket, &QWebSocket::connected, this, &MainWindow::onWebSocketConnected);
@@ -355,11 +369,16 @@ void MainWindow::connectServer()
     connect(webSocket, &QWebSocket::stateChanged, this, &MainWindow::onWebSocketStateChanged);
     connect(webSocket, &QWebSocket::pong, this, &MainWindow::onWebSocketPong);
 
-    webSocket->open(webSocketUrl);
-
     webSocketPingTimer.setInterval(15000);
-    webSocketPingTimer.start();
     connect(&webSocketPingTimer, &QTimer::timeout, this, &MainWindow::onWebSocketTimerTimeout);
+
+    if (connectedEnabled) {
+        webSocket->open(webSocketUrl);
+        webSocketPingTimer.start();
+    } else {
+        webSocketPingTimer.stop();
+        qDebug() << "connect server disabled";
+    }
 }
 
 void MainWindow::onWebSocketConnected()
@@ -416,10 +435,12 @@ void MainWindow::onWebSocketTimerTimeout()
 
     if (connectedService && webSocketLastPongTime.addSecs(30) > QDateTime::currentDateTime()) {
         webSocket->ping(QByteArray().append("PING"));
-    } else {
+    } else if (connectedEnabled) {
         qDebug() << "websocket reconnect for timeout";
         webSocket->close();
         webSocket->open(webSocketUrl);
+    } else {
+        qDebug() << "websocket reconnect for timeout,but disabled to connect server";
     }
 }
 

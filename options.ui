@@ -35,7 +35,7 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>150</x>
      <y>100</y>
      <width>80</width>
      <height>40</height>
@@ -84,6 +84,25 @@
    </property>
    <property name="wordWrap">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="stateBtn">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>100</y>
+     <width>80</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>ON</string>
+   </property>
+   <property name="autoDefault">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

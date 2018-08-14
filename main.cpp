@@ -21,14 +21,16 @@ int main(int argc, char *argv[])
     QVariant urlValue = settings->value("url/default");
     if (urlValue.isNull()
             || urlValue.toString().length() == 0
-            || urlValue.toString().startsWith("ws") == false) {
+            || (urlValue.toString().startsWith("ws://") == false && urlValue.toString().startsWith("wss://") == false)) {
         settings->setValue("common/url", "default");
+        settings->setValue("common/enabled", false);
         settings->setValue("url/default", "ws://127.0.0.1:8899/sock?proxy=0");
         settings->setValue("http/port", 7878);
         settings->setValue("http/minThreads", 1);
     }
 
     qDebug() << settings->fileName();
+    qDebug() << settings->allKeys();
 
     QApplication app(argc, argv);
     MainWindow win;

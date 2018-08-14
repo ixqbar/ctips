@@ -25,6 +25,7 @@ private:
     QSettings *settings;
     QString webSocketUrlSectionName;
     int webSocketUrlSectionIndex;
+    bool connectedEnabled;
 
 private slots:
     void currentIndexChanged(int index);

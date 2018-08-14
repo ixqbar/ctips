@@ -17,8 +17,33 @@ Options::Options(QWidget *parent) :
     connect(ui->comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Options::currentIndexChanged);
     ui->okBtn->setEnabled(false);
 
+    connectedEnabled = settings->value("common/enabled").toBool();
+    if (connectedEnabled) {
+        ui->stateBtn->setText("OFF");
+    } else {
+        ui->stateBtn->setText("ON");
+    }
+
     connect(ui->noBtn, &QPushButton::clicked, [&]() {
         this->hide();
+    });
+
+    connect(ui->stateBtn, &QPushButton::clicked, [&]() {
+        if (connectedEnabled) {
+            ui->stateBtn->setText("ON");
+            ui->okBtn->setEnabled(false);
+        } else {
+            ui->stateBtn->setText("OFF");
+        }
+
+        connectedEnabled = !connectedEnabled;
+
+        settings->setValue("common/enabled", connectedEnabled);
+        settings->sync();
+
+        MessageEvent *msgEvent = new MessageEvent();
+        msgEvent->setMessage(2, QString::number(connectedEnabled));
+        QApplication::postEvent(this->parent(), msgEvent);
     });
 
     connect(ui->okBtn, &QPushButton::clicked, [&]() {

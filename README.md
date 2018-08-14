@@ -1,12 +1,13 @@
 ## version
 ```
-v0.0.4
+v0.0.5
 ```
 
 ## config
 ```
 [common]
 url=default
+enabled=false
 
 [url]
 default="ws://127.0.0.1:8899/sock?proxy=0&monitor=1"

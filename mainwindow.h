@@ -44,6 +44,7 @@ private:
     bool gotAppIconPosition;
     bool connectedService;
     bool trayIconSwitched;
+    bool connectedEnabled;
 
     QPixmap stateOnPixmap;
     QPixmap stateOffPixmap;
